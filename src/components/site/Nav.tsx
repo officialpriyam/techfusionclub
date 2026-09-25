@@ -39,16 +39,20 @@ export function Nav() {
       <nav
         aria-label="Primary"
         className={cn(
-          "pointer-events-auto mx-auto flex h-14 items-center justify-between gap-3 rounded-full border px-3 transition-all duration-500 sm:h-16 sm:gap-4 sm:px-4",
+          "pointer-events-auto mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 rounded-full border px-2.5 transition-all duration-500 sm:h-16 sm:gap-4 sm:px-4",
           scrolled || open
-            ? "glass-strong max-w-5xl border-border/80 shadow-2xl backdrop-blur-2xl"
-            : "max-w-7xl border-border/50 bg-background/45 shadow-lg backdrop-blur-xl",
+            ? "glass-strong border-border/80 shadow-2xl backdrop-blur-2xl sm:h-14"
+            : "border-border/50 bg-background/45 shadow-lg backdrop-blur-xl",
         )}
       >
         {/* Direct Logo Image + Clean Bold Gradient Heading */}
-        <Link to="/" className="group flex items-center gap-3" onClick={() => setOpen(false)}>
-          <Logo className="h-10 sm:h-12 w-auto transition-transform duration-300 group-hover:scale-105" />
-          <div className="flex flex-col">
+        <Link
+          to="/"
+          className="group flex shrink-0 items-center gap-3 whitespace-nowrap"
+          onClick={() => setOpen(false)}
+        >
+          <Logo className="h-10 w-auto shrink-0 transition-transform duration-300 group-hover:scale-105 sm:h-12" />
+          <div className="flex flex-col lg:hidden xl:flex">
             <span className="font-display text-xl font-extrabold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-foreground via-primary-glow to-accent drop-shadow-[0_0_12px_rgba(217,72,15,0.4)] sm:text-2xl">
               TECH FUSION
             </span>
@@ -58,7 +62,7 @@ export function Nav() {
           </div>
         </Link>
 
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden shrink-0 items-center gap-1 whitespace-nowrap lg:flex">
           {links.map((link) => (
             <li key={"to" in link ? link.to : link.href}>
               {"external" in link && link.external ? (
@@ -66,7 +70,7 @@ export function Nav() {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="electric-link inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-sm font-semibold text-primary-glow transition-colors hover:text-foreground xl:px-4"
+                  className="electric-link inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-primary-glow transition-colors hover:text-foreground xl:px-4"
                 >
                   {link.label}
                   <ExternalLink className="size-3" />
@@ -76,7 +80,7 @@ export function Nav() {
                   to={"to" in link ? link.to : "/"}
                   activeOptions={{ exact: ("to" in link ? link.to : "/") === "/" }}
                   activeProps={{ className: "text-foreground font-semibold" }}
-                  className="electric-link rounded-full px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground xl:px-4"
+                  className="electric-link inline-block shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground xl:px-4"
                 >
                   {link.label}
                 </Link>
@@ -85,7 +89,7 @@ export function Nav() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {/* Light / Dark Theme Toggle Button */}
           <button
             type="button"
@@ -103,7 +107,7 @@ export function Nav() {
 
           <Link
             to="/join"
-            className="group pulse-glow relative hidden overflow-hidden rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.03] sm:inline-flex"
+            className="group pulse-glow relative hidden shrink-0 items-center whitespace-nowrap overflow-hidden rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-[1.03] sm:inline-flex"
           >
             <span className="relative z-10">Join the Club</span>
             <span className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-primary-foreground/25 opacity-0 group-hover:animate-sheen group-hover:opacity-100" />
