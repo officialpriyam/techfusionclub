@@ -17,7 +17,6 @@ import {
   X,
 } from "lucide-react";
 import {
-  allEventDomains,
   eventCategories,
   eventStats,
   eventYears,
@@ -33,7 +32,6 @@ import { EventModal } from "@/components/site/EventModal";
 import { EventSpotlight } from "@/components/site/EventSpotlight";
 import { CTABanner } from "@/components/site/CTABanner";
 import { FloatButton } from "@/components/site/FloatButton";
-import { Marquee } from "@/components/site/Marquee";
 import { Reveal } from "@/components/site/Reveal";
 import { RiseText } from "@/components/site/RiseText";
 import { ScrollWords } from "@/components/site/ScrollWords";
@@ -202,36 +200,8 @@ function Events() {
 
   return (
     <>
-      {/* ---------------- Ticker ---------------- */}
-      <div className="scrub-rise border-y border-border/60 bg-surface/40 py-4 backdrop-blur-sm">
-        <Marquee duration={38}>
-          {allEventDomains.map((d) => (
-            <span
-              key={d}
-              className="inline-flex items-center gap-3 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground"
-            >
-              {d}
-              <span className="text-primary-glow">/</span>
-            </span>
-          ))}
-          {eventCategories.map((c) => (
-            <span
-              key={c}
-              className="inline-flex items-center gap-3 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.2em] text-primary-glow"
-            >
-              {c}
-              <span className="text-muted-foreground">·</span>
-            </span>
-          ))}
-        </Marquee>
-      </div>
-
       {/* ---------------- Spotlight ---------------- */}
       <Section className="pb-8">
-        <Reveal className="scrub-fade mb-7 flex items-center gap-2">
-          <Flame className="size-4 text-primary-glow" />
-          <p className="eyebrow">Headlining</p>
-        </Reveal>
         <EventSpotlight event={nextEvent} onOpen={() => setOpenSlug(nextEvent.slug)} />
       </Section>
 

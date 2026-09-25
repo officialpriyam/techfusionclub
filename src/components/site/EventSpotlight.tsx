@@ -5,11 +5,9 @@ import {
   ExternalLink,
   MapPin,
   MousePointerClick,
-  Sparkles,
-  Users,
 } from "lucide-react";
 import type { ClubEvent } from "@/data/events";
-import { formatEventDate, relativeEventLabel } from "@/data/events";
+import { formatEventDate } from "@/data/events";
 import { useParallax, useCursorGlow } from "@/lib/motion";
 import { Countdown } from "./Countdown";
 import { FloatButton } from "./FloatButton";
@@ -66,15 +64,6 @@ export function EventSpotlight({ event, onOpen }: { event: ClubEvent; onOpen: ()
             {/* Fixed-height spacer keeps the column sized while the image parallaxes */}
             <div className="relative min-h-[16rem] sm:min-h-[22rem] lg:min-h-[30rem]" />
 
-            <div className="absolute left-5 top-5 flex flex-wrap gap-2 sm:left-7 sm:top-7">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-background/75 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-accent backdrop-blur">
-                <Sparkles className="size-3" /> Next up
-              </span>
-              <span className="rounded-full border border-primary/40 bg-background/75 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-primary-glow backdrop-blur">
-                {event.category}
-              </span>
-            </div>
-
             <span className="glass absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full px-4 py-2 font-mono text-[10px] uppercase tracking-[0.16em] opacity-0 transition-all duration-500 group-hover/media:-bottom-1 group-hover/media:opacity-100 sm:left-auto sm:right-7 sm:translate-x-0">
               <MousePointerClick className="size-3" /> Read the brief
             </span>
@@ -82,8 +71,7 @@ export function EventSpotlight({ event, onOpen }: { event: ClubEvent; onOpen: ()
 
           <div className="relative flex flex-col justify-center gap-6 p-7 sm:p-10 lg:p-12">
             <div>
-              <p className="eyebrow">{relativeEventLabel(event.date)}</p>
-              <h2 className="mt-3 text-balance font-display text-2xl font-bold leading-snug sm:text-3xl lg:text-4xl">
+              <h2 className="text-balance font-display text-2xl font-bold leading-snug sm:text-3xl lg:text-4xl">
                 {event.title}
               </h2>
               <p className="mt-4 text-pretty leading-relaxed text-muted-foreground">
@@ -104,11 +92,6 @@ export function EventSpotlight({ event, onOpen }: { event: ClubEvent; onOpen: ()
                 <CalendarDays className="size-3.5 text-primary-glow" />
                 {formatEventDate(event)}
               </span>
-              {event.attendees ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <Users className="size-3.5 text-primary-glow" /> {event.attendees} seats
-                </span>
-              ) : null}
             </div>
 
             {event.status === "upcoming" ? (

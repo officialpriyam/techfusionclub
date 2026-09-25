@@ -155,3 +155,22 @@ The whole hero `<section>` (was 213–295 in `src/routes/events.index.tsx`) is g
 **Still here, and still called "loaders":** the `shimmer` skeleton `SmartImage` shows while a cover fetches, and the TanStack `loader:` functions that fetch event data — both invisible-by-design and untouched. `hero-gradient`, `circuit-lines`, `animate-float` and `eyebrow` all survived because other components still reference them; `animate-caret-blink` in `src/components/ui/input-otp.tsx` is an unrelated shadcn leftover that was never defined in this repo's CSS.
 
 **Verified:** served HTML for `/events` contains zero `boot-bar` / `resolving calendar records` strings and one `scrub-rise` ticker; a headless capture at 2.5 s shows the nav + ticker + spotlight with no overlay; `npx tsc --noEmit` is unchanged at the same 6 pre-existing errors; `npm run build` passes.
+
+---
+
+## 11. Removed after `5b2ca07` — ticker, Headlining label, cover pills and meta lines
+
+Pointed out from phone screenshots: five small elements were either noise or clipped outright at narrow widths. All five are gone, and `/events` now opens directly on the spotlight card.
+
+| Where | Removed |
+| --- | --- |
+| `src/routes/events.index.tsx` | The domain ticker block (the `Marquee` of `allEventDomains` + `eventCategories`) and the `Reveal` row holding the `Flame` icon + "Headlining" eyebrow; `Marquee` and `allEventDomains` imports dropped |
+| `src/components/site/EventSpotlight.tsx` | The `Next up` + category pill row on the cover, the `relativeEventLabel` eyebrow above the title, and the `{attendees} seats` span in the meta row; `Sparkles` / `Users` / `relativeEventLabel` imports dropped |
+| `src/components/site/Marquee.tsx` | File deleted — the ticker was its only consumer |
+| `src/styles.css` | `@utility marquee-track`, `@utility mask-fade-x` and `@keyframes fusion-marquee` (23 lines), all unreferenced once the ticker went |
+
+`relativeEventLabel` itself stays in `src/data/events.ts` — `EventCard` and `EventModal` still call it. `Flame` and `Users` stay imported in `events.index.tsx`; both are still used by the closing stat row.
+
+**Verified:** DOM assertions on `/events` confirm no `.marquee-track`, no "Headlining" text, no "Next up" pill, no "weeks" or "seats" string inside the spotlight, one `<h1>`, and `#catalogue` + `#calendar` intact; `scrollWidth === clientWidth` at 1107 px. `tsc` still at the 6-error baseline and `npm run build` passes.
+
+**Found, not fixed:** at 390 px the header overflows — logo + theme toggle + "Join the Club" + hamburger need ~440 px, so the CTA is pushed off-screen and the document scrolls sideways. That is `Nav.tsx`, which is byte-identical to upstream and was deliberately reverted earlier, so it is out of scope here.

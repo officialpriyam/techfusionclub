@@ -386,19 +386,6 @@ html.light {
   transform-style: preserve-3d;
 }
 
-/* Infinite horizontal ticker. Requires two identical children inside the track. */
-@utility marquee-track {
-  display: flex;
-  width: max-content;
-  animation: fusion-marquee var(--marquee-duration, 32s) linear infinite;
-}
-
-/* Fade the ticker edges out so items don't clip harshly at the container box. */
-@utility mask-fade-x {
-  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
-}
-
 /* Pointer-reactive 3D tilt. --tilt-x / --tilt-y come from useTilt (desktop only). */
 @utility tilt-scene {
   perspective: 1100px;
@@ -494,15 +481,6 @@ html.light {
 }
 
 /* ---------- Motion ---------- */
-
-@keyframes fusion-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
 
 @keyframes fusion-kenburns {
   from {
