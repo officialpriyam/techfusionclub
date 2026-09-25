@@ -332,9 +332,11 @@ function Events() {
       <Section id="catalogue" className="scroll-mt-24">
         <Reveal className="scrub-fade">
           <h2 className="text-balance font-display text-3xl font-bold leading-tight sm:text-4xl">
-            The full catalogue.
+            <RiseText text="The full catalogue." step={55} />
           </h2>
-          <p className="mt-3 max-w-2xl text-pretty leading-relaxed text-muted-foreground">
+        </Reveal>
+        <Reveal delay={180} className="mt-3 max-w-2xl">
+          <p className="text-pretty leading-relaxed text-muted-foreground">
             Filter by year, format or domain. Every card opens the complete brief — highlights,
             winners, and the photo set from the floor.
           </p>
@@ -465,7 +467,7 @@ function Events() {
             <div className="mt-10 space-y-12">
               {grouped.map(([groupYear, list]) => (
                 <div key={groupYear}>
-                  <div className="mb-5 flex items-center gap-4">
+                  <div className="scrub-rise mb-5 flex items-center gap-4">
                     <span className="font-display text-2xl font-bold text-primary-glow">
                       {groupYear}
                     </span>
@@ -509,7 +511,11 @@ function Events() {
             </div>
             <p className="eyebrow mt-6">{isFutureYear ? `${year} calendar` : "No matches"}</p>
             <h3 className="mt-4 font-display text-2xl font-bold sm:text-3xl">
-              {isFutureYear ? "Coming soon" : "Nothing here yet"}
+              <RiseText
+                key={isFutureYear ? "soon" : "none"}
+                text={isFutureYear ? "Coming soon" : "Nothing here yet"}
+                step={60}
+              />
             </h3>
             <p className="mx-auto mt-4 max-w-md text-pretty leading-relaxed text-muted-foreground">
               {isFutureYear
@@ -530,9 +536,11 @@ function Events() {
         <Reveal className="scrub-fade">
           <p className="eyebrow">What you're signing up for</p>
           <h2 className="mt-4 max-w-3xl text-balance font-display text-3xl font-bold leading-tight sm:text-4xl">
-            Every event goes through the same four stages.
+            <RiseText text="Every event goes through the same four stages." step={48} />
           </h2>
-          <p className="mt-3 max-w-2xl text-pretty leading-relaxed text-muted-foreground">
+        </Reveal>
+        <Reveal delay={200} className="mt-3 max-w-2xl">
+          <p className="text-pretty leading-relaxed text-muted-foreground">
             No mystery invites and no vibes-based scheduling. This is the loop a session travels
             from its first proposal to the notes we publish the week it ends.
           </p>
