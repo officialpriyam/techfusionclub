@@ -173,4 +173,26 @@ Pointed out from phone screenshots: five small elements were either noise or cli
 
 **Verified:** DOM assertions on `/events` confirm no `.marquee-track`, no "Headlining" text, no "Next up" pill, no "weeks" or "seats" string inside the spotlight, one `<h1>`, and `#catalogue` + `#calendar` intact; `scrollWidth === clientWidth` at 1107 px. `tsc` still at the 6-error baseline and `npm run build` passes.
 
-**Found, not fixed:** at 390 px the header overflows — logo + theme toggle + "Join the Club" + hamburger need ~440 px, so the CTA is pushed off-screen and the document scrolls sideways. That is `Nav.tsx`, which is byte-identical to upstream and was deliberately reverted earlier, so it is out of scope here.
+**Header:** the overflow note that used to sit here was wrong on both counts — see §12.
+
+---
+
+## 12. `src/components/site/Nav.tsx` — narrow viewports, fixed
+
+**The earlier claim was wrong twice over.** It said the header needed ~440 px at 390 px and scrolled sideways, because logo + theme toggle + "Join the Club" + hamburger could not fit. Neither part holds. "Join the Club" is `hidden … sm:inline-flex`, so below 640 px it is not in the row at all, and the 390 px capture that motivated the claim came from a DPI-scaled headless window — roughly 312 CSS px, not 390. `documentElement.scrollWidth` was never the right instrument either: the header is `fixed`, and a fixed box overflowing its own width does not extend document scroll.
+
+**What is actually broken:** below 360 px the "TECH FUSION" wordmark wraps onto two lines. Measured at a 280 px viewport (265 px after the scrollbar) the wordmark box was 56 px tall across 2 lines, so the logo link stood 66 px inside the 64 px `h-16` bar and poked past it. Row edges still fit — logo group 161 px, right group ending at 285 of 305 at 320 px — so this is a vertical burst, not a horizontal scroll.
+
+**Change:** the nav row goes `px-5` → `px-4 sm:px-8` and `gap-4` → `gap-2 sm:gap-4`, and four `max-[360px]:` guards are added — `h-9` on the logo mark, `text-base tracking-wide whitespace-nowrap` on the wordmark, `tracking-[0.25em]` on "CLUB", `gap-2` on the logo link. `whitespace-nowrap` is what kills the two-line burst; the size guards buy back the width it costs.
+
+**Verified** in a same-origin iframe at the real CSS widths — the only reliable path here, since the in-app browser cannot resize and headless captures lie about DPI:
+
+| Viewport | Wordmark | Logo link | Right edge vs client width |
+| --- | --- | --- | --- |
+| 280 px | 102 × 24, one line | 36 px | 249 of 265 |
+| 320 px | 102 × 24, one line | 36 px | 289 of 305 |
+| 390 px | 133 × 28, one line | 40 px | 359 of 375 |
+
+At 390 px the numbers match the pre-change ones exactly (wordmark 133 px wide, group 185 px). Tailwind v4 compiles `max-[360px]:` as a strict `width < 360px`, so phones at 360 px and up are untouched, which is the point: nothing about the current design changes where anyone actually looks at it. `tsc` is still at the 6-error baseline — the four `Nav.tsx` errors moved to 69/72/138/141 purely because the `<Link>` opening tag spans more lines now, and they are the same pre-existing `link.href` ones. Build passes.
+
+**Scope:** this file is deliberately **not** in `pr/events-page-refresh`. That branch stays page-scoped so it reads as an events-only change; the header fix is a separate concern and can be its own one-file PR if you want it upstream.
