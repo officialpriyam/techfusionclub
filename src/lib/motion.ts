@@ -139,34 +139,6 @@ function canAnimate() {
 }
 
 /**
- * Writes `--scroll-progress` (0..1) on the document element. DOM write instead
- * of state so a scroll frame never re-renders the tree.
- */
-export function useScrollProgress() {
-  useEffect(() => {
-    const root = document.documentElement;
-    let frame = 0;
-    const apply = () => {
-      const max = root.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-      root.style.setProperty("--scroll-progress", p.toFixed(4));
-      frame = 0;
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(apply);
-    };
-    apply();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
-}
-
-/**
  * Tilt + cursor glow in one pointer handler, so a card that wants both effects
  * doesn't need two refs fighting over the same element. Writes --tilt-x /
  * --tilt-y for the `tilt-card` utility and --mx / --my for `cursor-glow`.

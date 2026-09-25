@@ -1,0 +1,141 @@
+# Update log — events rebuild, motion layer, in-page calendar
+
+**Range:** `e1d94a6` (state before this work) → `46e5068` (`main`, pushed)
+**Commits:** `c585ab8` events rebuild + motion layer · `6fc8cb3` nav overflow fix · `69e4fb4` scroll text-loading · `46e5068` in-page calendar + navbar revert
+**Date:** 2026-09-25
+
+Line numbers below refer to the files **as committed in `46e5068`**, not to the old file. Two changes sit on top of that commit and are **not yet committed** — the scroll-progress bar removal (§8) and the events hero removal (§9); the §2 line numbers already reflect the first, the events.index citations reflect both.
+
+---
+
+## 1. File inventory
+
+| File | Status | What happened |
+| --- | --- | --- |
+| `src/components/site/EventCalendar.tsx` | **new** (432 lines) | In-page month grid, Google-Calendar-style |
+| `src/components/site/RiseText.tsx` | **new** | Word-by-word scroll rise |
+| `src/components/site/FloatButton.tsx` | **new** | CTA with cursor glow + lift-off sparks |
+| `src/components/site/EventSpotlight.tsx` | **new** (167) | Next-event hero card, corner frame, click → brief |
+| `src/components/site/PageIntro.tsx` | **new** (72) | Boot-sequence intro (progress bar + caret) |
+| `src/components/site/ScrollWords.tsx` | **new** (71) | Words that light up with scroll position |
+| `src/components/site/SmartImage.tsx` | **new** (66) | Lazy/aspect-safe image |
+| `src/components/site/Countdown.tsx` | **new** (63) | Live `D/H/M/S` countdown |
+| `src/components/site/SplitText.tsx` | **new** (47) | Masked split-in title |
+| `src/components/site/Marquee.tsx` | **new** (37) | Infinite ticker (needs two identical children) |
+| `src/styles.css` | modified | 560 added / 11 removed — the motion layer (§2) |
+| `src/lib/motion.ts` | modified | `useTiltGlow` (147), `useParallax` (209) |
+| `src/routes/events.index.tsx` | modified | Rebuilt; calendar section at 445–454 (hero since removed, §9) |
+| `src/components/site/EventModal.tsx` | modified | Full brief dialog + focus contract (§4) |
+| `src/components/site/EventCard.tsx` | modified | Hover float, cursor glow, click → modal |
+| `src/components/site/Section.tsx` | modified | `SectionHeading` animates site-wide (6–59) |
+| `src/components/site/CTABanner.tsx` | modified | `RiseText` title (4, 23) |
+| `src/routes/__root.tsx` | modified | Font-loading fix (§5) |
+| `src/data/events.ts` | modified | Derived exports (244–298) |
+| `src/components/site/Nav.tsx` | modified → **reverted** | Net zero; identical to `e1d94a6` |
+
+> Correction to what I said earlier in chat: `Countdown`, `EventSpotlight`, `FloatButton`, `Marquee`, `PageIntro`, `RiseText`, `ScrollWords`, `SmartImage` and `SplitText` are all **new files**, not edits of pre-existing components. Only `EventCard`, `EventModal`, `Section`, `CTABanner`, `Nav`, `styles.css`, `motion.ts`, `events.ts`, `__root.tsx` and `events.index.tsx` were modified. A tenth new file, `ScrollRail.tsx`, was created and then deleted again (§8).
+
+---
+
+## 2. `src/styles.css` — shared motion layer
+
+This is the file with the most cross-page effect, so it gets line-level detail.
+
+| Lines | Added | Used by |
+| --- | --- | --- |
+| 182–186 | `html { scrollbar-gutter: stable }` with the why-comment | Stops the fixed nav jumping 15px when a modal locks scroll |
+| 390, 397 | `marquee-track`, `mask-fade-x` | `Marquee` |
+| 403, 407 | `tilt-scene`, `tilt-card` | `useTiltGlow` |
+| 417, 422 | `ken-burns`, `shimmer` | Spotlight image, skeleton text |
+| 437, 445, 455 | `split-word-mask`, `split-word`, `lit-word` (+ `.lit-word.is-lit`) | `SplitText`, `ScrollWords` |
+| 470, 474, 478 | `animate-pop-in`, `animate-fade-in`, `sheen-hover` | Dialog, calendar day panel, CTAs |
+| 498–618 | `@keyframes fusion-marquee` 498 · `-kenburns` 507 · `-shimmer` 516 · `-pop-in` 522 · `-fade-in` 533 · `-drift` 542 · `-scrub-rise` 557 · `-scrub-line` 568 · `-boot-bar` 577 · `-caret` 586 · `-tick` 601, plus utilities `animate-boot-bar` 597, `animate-tick` 612, `animate-caret` 616 | `PageIntro`, `Countdown`, scroll reveals |
+| 777, 781 | `animate-drift`, `animate-float-slow` | Empty state, decorative orbs |
+| 787, 793, 800 | `@property --aurora-angle`, `fusion-aurora-spin`, `aurora-sweep` | Events hero backdrop (registered angle so the conic gradient can rotate) |
+| 816, 823 | `fusion-grid-move`, `grid-scroll` | Events hero grid |
+| 841, 856, 872, 877 | `fusion-mote-drift`, `mote-field`, `grain-overlay`, `hero-fade-b` | Hero backdrop depth |
+| 883 | `rise-word` (+ `.rise.is-visible .rise-word`) | `RiseText` |
+| 904, 914, 926 | `float-motes`, `float-mote`, `fusion-mote-lift` (scoped under `.group:hover`) | `FloatButton` sparks — CSS-only, hover-gated, so nothing animates on touch |
+| 951, 978 | `corner-frame`, `corner-bracket` | Spotlight in-box moving corner line |
+| 987, 994 | `hover-float` + `@media (hover: hover) and (pointer: fine)` wrapper | Cards, filter chips |
+| 1003, 1016 | `fusion-scrub-fade`, `fusion-scrub-out` | Scroll-driven reveals |
+| 1024–1051 | `@supports (animation-timeline: view())` block → `.scrub-rise` 1026, `.scrub-line` 1032, `.scrub-fade` 1039, `.scrub-out` 1045 | Native scroll-driven animation as progressive enhancement — no library, no JS state |
+| 1053–1112 | Additions inside `@media (prefers-reduced-motion: reduce)`: `.reveal`/`.lit-word`, `.split-word`, `.rise-word`, `.scrub-rise/.scrub-line/.scrub-fade/.scrub-out` (1085–1088), `.aurora-sweep`/`.grid-scroll`/`.mote-field`, `.float-mote`/`.corner-frame::before`, `.hover-float:hover` | Mandatory neutralisation of every new effect |
+
+Also in this file, **cosmetic only** — no value changed: the Prettier reflow of `--gradient-hero` (113–115) and `--shadow-accent-glow` (133–135), and three stray blank-line removals (12, 218, 368).
+
+Two rules the layer follows, both already project conventions: **no hardcoded colors** (every token comes from `--color-*`, using `color-mix(in oklab, …)` where a tint is needed) and **no animation libraries** (keyframes + IntersectionObserver + rAF writing CSS custom properties).
+
+---
+
+## 3. `src/components/site/EventCalendar.tsx` (new)
+
+- **Date handling:** event dates are plain `YYYY-MM-DD`, so they are sliced (`partsOf`, line 28) rather than read back through `new Date(iso)` — that lands on the previous day west of UTC.
+- **Multi-day events** expand to every day they touch (`byCalendarDay`, 43), so a 3-day fest appears on all three dates and still counts once in the month tally (`countInMonth`, 61).
+- **Whole-week grid** (line 125): the grid starts on the Sunday before the 1st and fills the neighbouring month's edges, so September 2026 renders Aug 30–31 and Oct 1–3 at `opacity-55` instead of blanks.
+- **Filter re-sync** (105–122): gated on a signature of the filtered slug set, *not* on `events` identity. The parent re-renders on every countdown tick with a fresh array; depending on identity snapped the grid back whenever you paged into a quiet month or pressed *Today*.
+- **Interaction:** a chip click opens that event's brief; a day holding exactly one event opens it directly from the day number; more than one reveals the day list under the grid (`pick`, line 152).
+- Cells use `bg-primary/12`, `bg-accent/15`, `text-primary-glow` tokens — nothing hardcoded.
+
+---
+
+## 4. `src/components/site/EventModal.tsx` — the focus contract
+
+Three effects replaced one that was doing too much:
+
+1. **Scroll lock + opener capture** keyed on open/closed only. Capturing `document.activeElement` here, above the focus effect, is what makes restore work; keying it on `isOpen` alone stops a countdown re-render from yanking focus back.
+2. **Reset on slug change** — screenshot index, panel scroll to top, focus the close button.
+3. **Keyboard handler** — Escape closes, ←/→ step between events, and Tab is trapped explicitly. The dialog renders inside `<main>`, so the background cannot be made `inert` without inerting the dialog itself; `aria-modal` alone does not cage Tab.
+
+---
+
+## 5. `src/routes/__root.tsx` — font loading
+
+`<link rel="stylesheet" media="print" onLoad="this.media='all'">` (with a `// @ts-ignore`) plus a `<noscript>` fallback replaced by one plain stylesheet `<link>` at line 163. The `media="print"` swap never resolved to `all` here, so Space Grotesk / DM Sans / JetBrains Mono arrived late and text popped. The rest of the diff in this file is Prettier reflowing long `meta`/`og` strings — no content changed. The `<main>` offset is back to `pt-16 sm:pt-20` (line 197).
+
+---
+
+## 6. Navbar: added, then fully rolled back
+
+`6fc8cb3` made the header a floating pill, but the condensed pill needed ~1041px of link row in a 952px header at 1024px, so labels wrapped out of the bar on scroll. Per your call to undo **all** navbar changes, `46e5068` restores `Nav.tsx` byte-for-byte to `e1d94a6`, brings back `pt-16 sm:pt-20` on `<main>`, and moves the sticky filter bar to `top-16 sm:top-20` so it sits flush under the header. Net effect on the navbar: zero. The `scrollbar-gutter: stable` rule (§2) stays — it fixes a modal bug, not a nav one.
+
+---
+
+## 7. Verification
+
+Typecheck: only the 6 pre-existing baseline errors (`Nav.tsx` 65/68/134/137, `data/alumni.ts` 14, `routes/index.tsx` 114). Four of them sitting at the original `Nav.tsx` line numbers is itself evidence the revert was exact. Build: passes (`✓ built in 851ms`).
+
+Verified against `http://localhost:3000/events` through CSSOM/DOM: calendar renders in-page at `#calendar` with no view toggle; 35 day cells + 7 weekday headers for September 2026; 2 busy days with 2 chips; 5 muted edge cells; today's number gets a filled circle; chip click → dialog "Smart India Hackathon (SIH) …"; day-number click on a one-event day → same dialog with no intermediate list; close restores focus to the exact day button and unlocks scroll; Next → October 2026 "0 events this month" and it stays; *Today* → back to September 2026; Grid/Timeline toggles both still work (timeline: 6 rows under 3 year headers).
+
+**Not verified:** no screenshots were possible — the in-app browser surface reported `visibilityState: hidden` / `NATIVE_BROWSER_VIEWPORT_UNAVAILABLE` all session, and IntersectionObserver never fires there, so the reveals are proven by cascade inspection only, never observed playing. No day in the current dataset holds two events, so the "+n more" day-list path is dormant. Key visual checks still owed by a human: the calendar box's appearance, dark mode, and narrow viewports.
+
+**Not committed by choice:** `.vercel/` build output, `package-lock.json` churn, and `src/routeTree.gen.ts` (auto-generated; line-ending diff only).
+
+---
+
+## 8. Removed after `46e5068` — the scroll-progress bar
+
+Uncommitted as of writing. Four things taken out, in the order a browser would meet them:
+
+| Where | Removed |
+| --- | --- |
+| `src/routes/events.index.tsx` | `<ScrollRail />` from the page root (was 213) and its import (was 43) |
+| `src/components/site/ScrollRail.tsx` | file deleted — nothing else referenced it |
+| `src/lib/motion.ts` | `useScrollProgress`, which wrote `--scroll-progress` on `<html>` via rAF |
+| `src/styles.css` | `@utility scroll-rail` and `@utility scroll-rail-fill`, plus the comment above them (19 lines) |
+
+**Kept, deliberately:** the `PageIntro` boot overlay and the progress bar *inside* it (`animate-boot-bar`, `styles.css` 597 / `PageIntro.tsx` 61–63). That bar belongs to the splash, which stays. `grep` confirms zero remaining references to `ScrollRail`, `scroll-rail` or `--scroll-progress`.
+
+All §2 line numbers already account for this deletion: the `@supports` block ends at 1051 rather than 1070, and the reduced-motion block starts at 1053 rather than 1072.
+
+---
+
+## 9. Removed after `46e5068` — the events hero
+
+The whole hero `<section>` (was 213–295 in `src/routes/events.index.tsx`) is gone: the backdrop stack, the eyebrow row, the `SplitText` headline, both `RiseText` paragraphs, the Browse/Register CTA row with the `Countdown`, and the four-`StatCounter` strip. `/events` now opens on the domain ticker, then Headlining → Catalogue → Calendar → Runbook → CTA.
+
+- Five imports became unused and were removed: `SplitText`, `StatCounter`, `Countdown`, and the `ArrowDown` + `Sparkles` icons.
+- The hero held the page's **only `<h1>`**, so the catalogue heading was promoted `h2` → `h1` (identical classes, Tailwind preflight means no visual change). Quirk left behind: the spotlight's event title is still an `h2` and appears *before* that `h1` in the DOM. Say so if you want it demoted to `h3`.
+- `#catalogue` still carries `scroll-mt-24` even though the hero CTA that targeted it is gone; harmless for deep links.
+
+**Now defined but referenced nowhere** — not deleted, pending your call: `aurora-sweep`, `grid-scroll`, `mote-field`, `grain-overlay`, `hero-fade-b`, `animate-float-slow` and `scrub-out` in `styles.css` (each also still listed in the reduced-motion / `@supports` blocks), and the `src/components/site/SplitText.tsx` component itself. `StatCounter` and `Countdown` stay live — the home page and the spotlight still use them.

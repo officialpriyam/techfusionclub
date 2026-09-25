@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useMemo, useState } from "react";
 import {
-  ArrowDown,
   CalendarClock,
   Camera,
   Compass,
@@ -12,7 +11,6 @@ import {
   List,
   RotateCcw,
   Search,
-  Sparkles,
   Timer,
   Trophy,
   Users,
@@ -33,18 +31,14 @@ import { EventCard, EventRow, FilterPill } from "@/components/site/EventCard";
 import { EventCalendar } from "@/components/site/EventCalendar";
 import { EventModal } from "@/components/site/EventModal";
 import { EventSpotlight } from "@/components/site/EventSpotlight";
-import { Countdown } from "@/components/site/Countdown";
 import { CTABanner } from "@/components/site/CTABanner";
 import { FloatButton } from "@/components/site/FloatButton";
 import { Marquee } from "@/components/site/Marquee";
 import { PageIntro } from "@/components/site/PageIntro";
 import { Reveal } from "@/components/site/Reveal";
 import { RiseText } from "@/components/site/RiseText";
-import { ScrollRail } from "@/components/site/ScrollRail";
 import { ScrollWords } from "@/components/site/ScrollWords";
 import { Section, SectionHeading } from "@/components/site/Section";
-import { SplitText } from "@/components/site/SplitText";
-import { StatCounter } from "@/components/site/StatCounter";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/events/")({
@@ -210,91 +204,6 @@ function Events() {
   return (
     <>
       <PageIntro />
-      <ScrollRail />
-
-      {/* ---------------- Hero ---------------- */}
-      <section className="relative overflow-hidden px-5 pb-20 pt-10 sm:px-8 sm:pb-28 sm:pt-14">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="hero-gradient absolute inset-0" />
-          <div className="circuit-lines absolute inset-0 opacity-60" />
-          <div className="aurora-sweep absolute left-1/2 top-[-44%] size-[130vmax] -translate-x-1/2 opacity-35 blur-3xl" />
-          <div className="grid-scroll absolute inset-x-0 bottom-0 h-[64%] opacity-50" />
-          <div className="mote-field absolute inset-0 opacity-60" />
-          <div className="animate-drift absolute -left-32 top-4 size-[26rem] rounded-full bg-primary/20 blur-3xl" />
-          <div className="animate-float-slow absolute -right-32 top-32 size-[22rem] rounded-full bg-accent/15 blur-3xl" />
-          <div className="animate-float-slow absolute -bottom-24 left-1/4 size-[18rem] rounded-full bg-primary/15 blur-3xl" />
-          <div className="grain-overlay absolute inset-0" />
-          <div className="hero-fade-b absolute inset-x-0 bottom-0 h-36" />
-        </div>
-
-        <div className="relative z-10 mx-auto w-full max-w-7xl">
-          <div className="scrub-out">
-            <Reveal className="flex flex-wrap items-center gap-x-3 gap-y-2">
-              <span className="animate-pulse-dot size-1.5 rounded-full bg-primary-glow" />
-              <p className="eyebrow">Events & hackathons</p>
-              <span className="h-px w-8 bg-border" />
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                Built by students, open to every department
-              </p>
-            </Reveal>
-
-            <h1 className="mt-6 max-w-4xl font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-              <SplitText
-                text="Everything we've run, and everything still to come."
-                emphasis={["still", "come"]}
-                step={45}
-              />
-            </h1>
-          </div>
-
-          <div className="mt-8 max-w-2xl space-y-4">
-            <RiseText
-              className="text-pretty text-lg leading-relaxed text-muted-foreground"
-              text={`${eventStats.total} logged events across ${eventStats.years} years — hackathons that ran past sunrise, workshops that shipped something you could actually deploy, CTFs nobody trusted the leaderboard on, and whole fest tracks.`}
-              step={20}
-            />
-            <RiseText
-              className="text-pretty leading-relaxed text-muted-foreground/80"
-              text="None of it is a one-off. Every brief keeps its schedule, its winners and the photos from the floor, so you can tell what a session is really like before you spend an evening on it."
-              step={14}
-            />
-          </div>
-
-          <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-            <Reveal delay={200} className="flex flex-wrap items-center gap-3">
-              <FloatButton href="#catalogue" className="px-7 py-3.5">
-                Browse the calendar
-                <ArrowDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
-              </FloatButton>
-              {nextEvent.registerUrl ? (
-                <FloatButton
-                  href={nextEvent.registerUrl}
-                  external
-                  variant="glass"
-                  className="px-7 py-3.5"
-                >
-                  <Sparkles className="size-4 text-primary-glow" />
-                  Register for {nextEvent.year}
-                </FloatButton>
-              ) : null}
-            </Reveal>
-
-            <Reveal delay={260}>
-              <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                Next up · {nextEvent.title.split("—")[0]?.trim() ?? nextEvent.title}
-              </p>
-              <Countdown to={nextEvent.date} />
-            </Reveal>
-          </div>
-
-          <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-border/60 pt-10 sm:grid-cols-4">
-            <StatCounter value={eventStats.total} suffix="+" label="Events logged" />
-            <StatCounter value={eventStats.upcoming} label="On the calendar" />
-            <StatCounter value={eventStats.attendees} suffix="+" label="Seats filled" />
-            <StatCounter value={eventStats.domains} label="Domains covered" />
-          </div>
-        </div>
-      </section>
 
       {/* ---------------- Ticker ---------------- */}
       <div className="scrub-rise border-y border-border/60 bg-surface/40 py-4 backdrop-blur-sm">
@@ -332,9 +241,9 @@ function Events() {
       {/* ---------------- Catalogue ---------------- */}
       <Section id="catalogue" className="scroll-mt-24">
         <Reveal className="scrub-fade">
-          <h2 className="text-balance font-display text-3xl font-bold leading-tight sm:text-4xl">
+          <h1 className="text-balance font-display text-3xl font-bold leading-tight sm:text-4xl">
             <RiseText text="The full catalogue." step={55} />
-          </h2>
+          </h1>
         </Reveal>
         <Reveal delay={180} className="mt-3 max-w-2xl">
           <p className="text-pretty leading-relaxed text-muted-foreground">

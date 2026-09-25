@@ -1050,25 +1050,6 @@ html.light {
   }
 }
 
-/* Fixed scroll-progress rail; --scroll-progress is written by useScrollProgress. */
-@utility scroll-rail {
-  position: fixed;
-  inset-inline: 0;
-  top: 0;
-  z-index: 60;
-  height: 2px;
-  background: transparent;
-  pointer-events: none;
-}
-
-@utility scroll-rail-fill {
-  height: 100%;
-  transform: scaleX(var(--scroll-progress, 0));
-  transform-origin: left center;
-  background-image: var(--gradient-primary);
-  box-shadow: 0 0 12px oklch(0.727 0.176 41 / 65%);
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
