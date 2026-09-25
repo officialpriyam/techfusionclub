@@ -34,7 +34,6 @@ import { EventSpotlight } from "@/components/site/EventSpotlight";
 import { CTABanner } from "@/components/site/CTABanner";
 import { FloatButton } from "@/components/site/FloatButton";
 import { Marquee } from "@/components/site/Marquee";
-import { PageIntro } from "@/components/site/PageIntro";
 import { Reveal } from "@/components/site/Reveal";
 import { RiseText } from "@/components/site/RiseText";
 import { ScrollWords } from "@/components/site/ScrollWords";
@@ -203,8 +202,6 @@ function Events() {
 
   return (
     <>
-      <PageIntro />
-
       {/* ---------------- Ticker ---------------- */}
       <div className="scrub-rise border-y border-border/60 bg-surface/40 py-4 backdrop-blur-sm">
         <Marquee duration={38}>

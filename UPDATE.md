@@ -1,10 +1,10 @@
 # Update log — events rebuild, motion layer, in-page calendar
 
-**Range:** `e1d94a6` (state before this work) → `46e5068` (`main`, pushed)
-**Commits:** `c585ab8` events rebuild + motion layer · `6fc8cb3` nav overflow fix · `69e4fb4` scroll text-loading · `46e5068` in-page calendar + navbar revert
+**Range:** `e1d94a6` (state before this work) → `46e5068` (`main`, pushed) → `refactor/events-drop-rail-and-hero`
+**Commits:** `c585ab8` events rebuild + motion layer · `6fc8cb3` nav overflow fix · `69e4fb4` scroll text-loading · `46e5068` in-page calendar + navbar revert · `2df342c` scroll-rail + hero removal (§8, §9) · the boot-splash removal (§10)
 **Date:** 2026-09-25
 
-Line numbers below refer to the files **as committed in `46e5068`**, not to the old file. Two changes sit on top of that commit and are **not yet committed** — the scroll-progress bar removal (§8) and the events hero removal (§9); the §2 line numbers already reflect the first, the events.index citations reflect both.
+Line numbers below refer to the files **as committed in `46e5068`**, not to the old file. Three changes sit on top of that commit and are committed on the branch above — the scroll-progress bar removal (§8), the events hero removal (§9) and the boot-splash removal (§10); the §2 line numbers account for §8, the `events.index.tsx` citations account for §8 and §9, and §10 lists its own deletions.
 
 ---
 
@@ -16,7 +16,7 @@ Line numbers below refer to the files **as committed in `46e5068`**, not to the 
 | `src/components/site/RiseText.tsx` | **new** | Word-by-word scroll rise |
 | `src/components/site/FloatButton.tsx` | **new** | CTA with cursor glow + lift-off sparks |
 | `src/components/site/EventSpotlight.tsx` | **new** (167) | Next-event hero card, corner frame, click → brief |
-| `src/components/site/PageIntro.tsx` | **new** (72) | Boot-sequence intro (progress bar + caret) |
+| `src/components/site/PageIntro.tsx` | **new** (72) → deleted (§10) | Boot-sequence intro (progress bar + caret) |
 | `src/components/site/ScrollWords.tsx` | **new** (71) | Words that light up with scroll position |
 | `src/components/site/SmartImage.tsx` | **new** (66) | Lazy/aspect-safe image |
 | `src/components/site/Countdown.tsx` | **new** (63) | Live `D/H/M/S` countdown |
@@ -33,7 +33,7 @@ Line numbers below refer to the files **as committed in `46e5068`**, not to the 
 | `src/data/events.ts` | modified | Derived exports (244–298) |
 | `src/components/site/Nav.tsx` | modified → **reverted** | Net zero; identical to `e1d94a6` |
 
-> Correction to what I said earlier in chat: `Countdown`, `EventSpotlight`, `FloatButton`, `Marquee`, `PageIntro`, `RiseText`, `ScrollWords`, `SmartImage` and `SplitText` are all **new files**, not edits of pre-existing components. Only `EventCard`, `EventModal`, `Section`, `CTABanner`, `Nav`, `styles.css`, `motion.ts`, `events.ts`, `__root.tsx` and `events.index.tsx` were modified. A tenth new file, `ScrollRail.tsx`, was created and then deleted again (§8).
+> Correction to what I said earlier in chat: `Countdown`, `EventSpotlight`, `FloatButton`, `Marquee`, `PageIntro`, `RiseText`, `ScrollWords`, `SmartImage` and `SplitText` are all **new files**, not edits of pre-existing components. Only `EventCard`, `EventModal`, `Section`, `CTABanner`, `Nav`, `styles.css`, `motion.ts`, `events.ts`, `__root.tsx` and `events.index.tsx` were modified. A tenth new file, `ScrollRail.tsx`, was created and then deleted again (§8), and `PageIntro.tsx` was deleted too (§10).
 
 ---
 
@@ -49,7 +49,7 @@ This is the file with the most cross-page effect, so it gets line-level detail.
 | 417, 422 | `ken-burns`, `shimmer` | Spotlight image, skeleton text |
 | 437, 445, 455 | `split-word-mask`, `split-word`, `lit-word` (+ `.lit-word.is-lit`) | `SplitText`, `ScrollWords` |
 | 470, 474, 478 | `animate-pop-in`, `animate-fade-in`, `sheen-hover` | Dialog, calendar day panel, CTAs |
-| 498–618 | `@keyframes fusion-marquee` 498 · `-kenburns` 507 · `-shimmer` 516 · `-pop-in` 522 · `-fade-in` 533 · `-drift` 542 · `-scrub-rise` 557 · `-scrub-line` 568 · `-boot-bar` 577 · `-caret` 586 · `-tick` 601, plus utilities `animate-boot-bar` 597, `animate-tick` 612, `animate-caret` 616 | `PageIntro`, `Countdown`, scroll reveals |
+| 498–618 | `@keyframes fusion-marquee` 498 · `-kenburns` 507 · `-shimmer` 516 · `-pop-in` 522 · `-fade-in` 533 · `-drift` 542 · `-scrub-rise` 557 · `-scrub-line` 568 · `-boot-bar` 577 · `-caret` 586 · `-tick` 601, plus utilities `animate-boot-bar` 597, `animate-tick` 612, `animate-caret` 616 | `PageIntro`, `Countdown`, scroll reveals — the `-boot-bar` / `-caret` pair and their utilities went again in §10 |
 | 777, 781 | `animate-drift`, `animate-float-slow` | Empty state, decorative orbs |
 | 787, 793, 800 | `@property --aurora-angle`, `fusion-aurora-spin`, `aurora-sweep` | Events hero backdrop (registered angle so the conic gradient can rotate) |
 | 816, 823 | `fusion-grid-move`, `grid-scroll` | Events hero grid |
@@ -124,7 +124,7 @@ Uncommitted as of writing. Four things taken out, in the order a browser would m
 | `src/lib/motion.ts` | `useScrollProgress`, which wrote `--scroll-progress` on `<html>` via rAF |
 | `src/styles.css` | `@utility scroll-rail` and `@utility scroll-rail-fill`, plus the comment above them (19 lines) |
 
-**Kept, deliberately:** the `PageIntro` boot overlay and the progress bar *inside* it (`animate-boot-bar`, `styles.css` 597 / `PageIntro.tsx` 61–63). That bar belongs to the splash, which stays. `grep` confirms zero remaining references to `ScrollRail`, `scroll-rail` or `--scroll-progress`.
+**Not touched here:** the `PageIntro` boot overlay outlived this deletion by one more commit — it and the progress bar inside it are removed in §10, not §8. `grep` confirms zero remaining references to `ScrollRail`, `scroll-rail` or `--scroll-progress`.
 
 All §2 line numbers already account for this deletion: the `@supports` block ends at 1051 rather than 1070, and the reduced-motion block starts at 1053 rather than 1072.
 
@@ -139,3 +139,19 @@ The whole hero `<section>` (was 213–295 in `src/routes/events.index.tsx`) is g
 - `#catalogue` still carries `scroll-mt-24` even though the hero CTA that targeted it is gone; harmless for deep links.
 
 **Now defined but referenced nowhere** — not deleted, pending your call: `aurora-sweep`, `grid-scroll`, `mote-field`, `grain-overlay`, `hero-fade-b`, `animate-float-slow` and `scrub-out` in `styles.css` (each also still listed in the reduced-motion / `@supports` blocks), and the `src/components/site/SplitText.tsx` component itself. `StatCounter` and `Countdown` stay live — the home page and the spotlight still use them.
+
+---
+
+## 10. Removed after `2df342c` — the boot splash
+
+`/events` no longer paints a full-screen "initialising" overlay before the page. First paint is now the nav and the domain ticker; nothing gates the page on a timer, and the reduced-motion branch of that component is moot since the component is gone.
+
+| Where | Removed |
+| --- | --- |
+| `src/routes/events.index.tsx` | `<PageIntro />` from the page root (was 206) and its import (was 37) |
+| `src/components/site/PageIntro.tsx` | file deleted (72 lines) — `BOOT_LINES`, the 900 ms hold / 520 ms fade timers, the logo, the boot bar and the status caret |
+| `src/styles.css` | `@keyframes fusion-boot-bar` + `@keyframes fusion-caret` and the `animate-boot-bar` + `animate-caret` utilities (28 lines) |
+
+**Still here, and still called "loaders":** the `shimmer` skeleton `SmartImage` shows while a cover fetches, and the TanStack `loader:` functions that fetch event data — both invisible-by-design and untouched. `hero-gradient`, `circuit-lines`, `animate-float` and `eyebrow` all survived because other components still reference them; `animate-caret-blink` in `src/components/ui/input-otp.tsx` is an unrelated shadcn leftover that was never defined in this repo's CSS.
+
+**Verified:** served HTML for `/events` contains zero `boot-bar` / `resolving calendar records` strings and one `scrub-rise` ticker; a headless capture at 2.5 s shows the nav + ticker + spotlight with no overlay; `npx tsc --noEmit` is unchanged at the same 6 pre-existing errors; `npm run build` passes.

@@ -574,30 +574,6 @@ html.light {
   }
 }
 
-@keyframes fusion-boot-bar {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes fusion-caret {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@utility animate-boot-bar {
-  animation: fusion-boot-bar 0.85s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-}
-
 @keyframes fusion-tick {
   from {
     opacity: 0;
@@ -611,10 +587,6 @@ html.light {
 
 @utility animate-tick {
   animation: fusion-tick 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@utility animate-caret {
-  animation: fusion-caret 1s steps(1) infinite;
 }
 
 @keyframes fusion-rise {
