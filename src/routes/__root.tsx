@@ -194,7 +194,7 @@ function RootComponent() {
           Skip to content
         </a>
         <Nav />
-        <main id="main" className="pt-20 sm:pt-24">
+        <main id="main" className="pt-16 sm:pt-20">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>

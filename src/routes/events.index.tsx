@@ -30,6 +30,7 @@ import {
   type EventCategory,
 } from "@/data/events";
 import { EventCard, EventRow, FilterPill } from "@/components/site/EventCard";
+import { EventCalendar } from "@/components/site/EventCalendar";
 import { EventModal } from "@/components/site/EventModal";
 import { EventSpotlight } from "@/components/site/EventSpotlight";
 import { Countdown } from "@/components/site/Countdown";
@@ -41,7 +42,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { RiseText } from "@/components/site/RiseText";
 import { ScrollRail } from "@/components/site/ScrollRail";
 import { ScrollWords } from "@/components/site/ScrollWords";
-import { Section } from "@/components/site/Section";
+import { Section, SectionHeading } from "@/components/site/Section";
 import { SplitText } from "@/components/site/SplitText";
 import { StatCounter } from "@/components/site/StatCounter";
 import { cn } from "@/lib/utils";
@@ -342,7 +343,7 @@ function Events() {
           </p>
         </Reveal>
 
-        <div className="sticky top-20 z-40 -mx-5 mt-8 px-5 sm:-mx-8 sm:px-8">
+        <div className="sticky top-16 z-40 -mx-5 mt-8 px-5 sm:-mx-8 sm:top-20 sm:px-8">
           <div className="glass-strong rounded-2xl p-4 shadow-lg sm:p-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
               <label className="relative flex-1">
@@ -529,6 +530,18 @@ function Events() {
             ) : null}
           </Reveal>
         )}
+      </Section>
+
+      {/* ---------------- Calendar ---------------- */}
+      <Section id="calendar">
+        <SectionHeading
+          eyebrow="On the calendar"
+          title="Every date we have booked a room for."
+          body="The whole run of sessions in one grid, so you can see what lands when. Click a highlighted day to open its brief — days that hold more than one session list them underneath."
+        />
+        <Reveal delay={160} className="mt-10">
+          <EventCalendar events={results} onOpen={setOpenSlug} />
+        </Reveal>
       </Section>
 
       {/* ---------------- Runbook ---------------- */}
