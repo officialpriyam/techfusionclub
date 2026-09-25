@@ -35,17 +35,15 @@ export function Nav() {
   }, [open]);
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-500",
-        scrolled
-          ? "glass-strong border-b border-border/80 shadow-2xl backdrop-blur-2xl"
-          : "border-b border-transparent bg-background/20 backdrop-blur-md",
-      )}
-    >
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-2.5 sm:px-5 sm:pt-4">
       <nav
         aria-label="Primary"
-        className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:h-20 sm:px-8"
+        className={cn(
+          "pointer-events-auto mx-auto flex h-14 items-center justify-between gap-3 rounded-full border px-3 transition-all duration-500 sm:h-16 sm:gap-4 sm:px-4",
+          scrolled || open
+            ? "glass-strong max-w-5xl border-border/80 shadow-2xl backdrop-blur-2xl"
+            : "max-w-7xl border-border/50 bg-background/45 shadow-lg backdrop-blur-xl",
+        )}
       >
         {/* Direct Logo Image + Clean Bold Gradient Heading */}
         <Link to="/" className="group flex items-center gap-3" onClick={() => setOpen(false)}>
@@ -127,7 +125,7 @@ export function Nav() {
       <div
         id="mobile-nav"
         hidden={!open}
-        className="glass-strong border-t px-5 pb-8 pt-4 lg:hidden"
+        className="glass-strong pointer-events-auto mx-auto mt-2.5 max-w-5xl rounded-3xl border border-border/70 px-5 pb-7 pt-3 shadow-2xl lg:hidden"
       >
         <ul className="flex flex-col">
           {links.map((link) => (

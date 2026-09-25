@@ -84,18 +84,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         name: "keywords",
-        content: "Tech fusion club, tfc srmu, viveka, srmu, club, webdevpraveen, praveen singh srmu, tech club, coding club srmu, technical events, hackathon, student community",
+        content:
+          "Tech fusion club, tfc srmu, viveka, srmu, club, webdevpraveen, praveen singh srmu, tech club, coding club srmu, technical events, hackathon, student community",
       },
       { name: "author", content: "Praveen Singh (webdevpraveen)" },
-      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      {
+        name: "robots",
+        content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      },
       { property: "og:site_name", content: "Tech Fusion Club SRMU" },
       { property: "og:type", content: "website" },
       { property: "og:title", content: "Tech Fusion Club (TFC) SRMU | Viveka & Tech Events" },
-      { property: "og:description", content: "Join the official Tech Fusion Club at SRMU. We host the Viveka fest, hackathons, and web development workshops. Lead by Praveen Singh (webdevpraveen)." },
-      { property: "og:image", content: "https://techfusionclub.vercel.app/images/branding/og-preview.jpg" },
+      {
+        property: "og:description",
+        content:
+          "Join the official Tech Fusion Club at SRMU. We host the Viveka fest, hackathons, and web development workshops. Lead by Praveen Singh (webdevpraveen).",
+      },
+      {
+        property: "og:image",
+        content: "https://techfusionclub.vercel.app/images/branding/og-preview.jpg",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Tech Fusion Club (TFC) SRMU" },
-      { name: "twitter:description", content: "The premier student tech community at SRMU. Viveka fest, hackathons & more." },
+      {
+        name: "twitter:description",
+        content: "The premier student tech community at SRMU. Viveka fest, hackathons & more.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -114,19 +128,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           alternateName: ["TFC SRMU", "Tech Fusion Club SRMU"],
           url: "https://techfusionclub.vercel.app",
           logo: "https://techfusionclub.vercel.app/images/branding/techfusionlogo.png",
-          description: "Student-led technical club running workshops, hackathons and the Viveka annual fest at SRMU.",
+          description:
+            "Student-led technical club running workshops, hackathons and the Viveka annual fest at SRMU.",
           foundingDate: "2019",
           founder: {
             "@type": "Person",
             name: "Praveen Singh",
-            alternateName: "webdevpraveen"
+            alternateName: "webdevpraveen",
           },
           email: "techfusionclub@srmu.ac.in",
-          sameAs: [
-            "https://github.com/webdevpraveen",
-            "https://www.linkedin.com/in/webdevpraveen"
-          ],
-          keywords: "Tech fusion club, tfc srmu, viveka, srmu, club, webdevpraveen, praveen singh srmu"
+          sameAs: ["https://github.com/webdevpraveen", "https://www.linkedin.com/in/webdevpraveen"],
+          keywords:
+            "Tech fusion club, tfc srmu, viveka, srmu, club, webdevpraveen, praveen singh srmu",
         }),
       },
     ],
@@ -142,26 +155,17 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
-        
+
         {/* Preload and defer Google Fonts to prevent render blocking */}
-        <link 
-          rel="preload" 
-          as="style" 
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" 
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap"
         />
-        <link 
-          rel="stylesheet" 
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" 
-          media="print" 
-          // @ts-ignore
-          onLoad="this.media='all'" 
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap"
         />
-        <noscript>
-          <link 
-            rel="stylesheet" 
-            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" 
-          />
-        </noscript>
         {/* Blocking script: apply saved theme BEFORE first paint to prevent FOUC */}
         <script
           dangerouslySetInnerHTML={{
@@ -190,7 +194,7 @@ function RootComponent() {
           Skip to content
         </a>
         <Nav />
-        <main id="main" className="pt-16 sm:pt-20">
+        <main id="main" className="pt-20 sm:pt-24">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>
@@ -199,4 +203,3 @@ function RootComponent() {
     </ThemeProvider>
   );
 }
-
