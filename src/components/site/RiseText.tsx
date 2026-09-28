@@ -3,9 +3,7 @@ import { useReveal } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /**
- * Body copy that rises into focus word by word. Where SplitText slides out from
- * behind a baseline mask, this blurs in as it lifts, so the two read as
- * different gestures when they appear on the same page.
+ * Body copy that rises into focus word by word, blurring out as it lifts.
  */
 export function RiseText({
   text,
