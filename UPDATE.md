@@ -91,7 +91,11 @@ Three effects replaced one that was doing too much:
 
 ## 5. `src/routes/__root.tsx` — font loading
 
-`<link rel="stylesheet" media="print" onLoad="this.media='all'">` (with a `// @ts-ignore`) plus a `<noscript>` fallback replaced by one plain stylesheet `<link>` at line 163. The `media="print"` swap never resolved to `all` here, so Space Grotesk / DM Sans / JetBrains Mono arrived late and text popped. The rest of the diff in this file is Prettier reflowing long `meta`/`og` strings — no content changed. The `<main>` offset is back to `pt-16 sm:pt-20` (line 197).
+`<link rel="stylesheet" media="print" onLoad="this.media='all'">` (with a `// @ts-ignore`) plus a `<noscript>` fallback replaced by one plain stylesheet `<link>` at line 154. The trick cannot work in JSX: `onLoad="this.media='all'"` passes a **string** where React expects a function, so React warns and never invokes it, the `media` attribute stays `print`, and the sheet never applies on screen — Space Grotesk / DM Sans / JetBrains Mono only ever arrived through the `<noscript>` copy, i.e. for users with JavaScript off. The `// @ts-ignore` was suppressing exactly the type error that would have caught this. Confirmed fixed by computed style: `body` now resolves to `"DM Sans", ui-sans-serif, system-ui` and `document.fonts.check()` is true for all three families.
+
+The diff in this file is now **3 added / 12 removed lines and nothing else** — every SEO `meta`, `og:` and JSON-LD line is byte-identical to upstream. An earlier version of this branch also carried Prettier's re-wrapping of those long strings; that was reverted, because reflowing the maintainer's SEO block inside an events PR is churn with no benefit and makes the file look like it touches SEO when it does not. The `<main>` offset is `pt-16 sm:pt-20` (line 184), matching upstream.
+
+One thing I did **not** change, though it is redundant: the page ends up requesting the Google Fonts sheet twice — once from the route's `links` head config and once from the JSX `<link>`. That duplication is present upstream as well, so it is theirs to decide on, not something to slip into this PR.
 
 ---
 
@@ -196,3 +200,25 @@ Pointed out from phone screenshots: five small elements were either noise or cli
 At 390 px the numbers match the pre-change ones exactly (wordmark 133 px wide, group 185 px). Tailwind v4 compiles `max-[360px]:` as a strict `width < 360px`, so phones at 360 px and up are untouched, which is the point: nothing about the current design changes where anyone actually looks at it. `tsc` is still at the 6-error baseline — the four `Nav.tsx` errors moved to 69/72/138/141 purely because the `<Link>` opening tag spans more lines now, and they are the same pre-existing `link.href` ones. Build passes.
 
 **Scope:** this file is deliberately **not** in `pr/events-page-refresh`. That branch stays page-scoped so it reads as an events-only change; the header fix is a separate concern and can be its own one-file PR if you want it upstream.
+
+---
+
+## 13. Dead-code sweep before the PR went up for review
+
+Removing the hero, the splash, the scroll rail and the ticker (§§8–11) orphaned code that nothing referenced any more. It was still shipping in the PR diff, so a reviewer would have been reading ~200 lines of CSS with no consumer.
+
+**Deleted:**
+
+| What | Why it was dead |
+| --- | --- |
+| `src/components/site/SplitText.tsx` (47 lines) | Its only consumer was the events hero headline, removed in `2df342c`. Nothing imported it afterwards |
+| `@utility split-word-mask`, `@utility split-word`, `.split.is-visible .split-word`, and the `.split-word` reduced-motion entry | SplitText was the sole user of all four |
+| The whole "Hero backdrop layers" section: `@property --aurora-angle`, `@keyframes fusion-aurora-spin`, `aurora-sweep`, `fusion-grid-move`, `grid-scroll`, `fusion-mote-drift`, `mote-field`, `grain-overlay`, `hero-fade-b` | Built for the hero's aurora wash, scrolling grid and speck field — all removed with it |
+| `@utility animate-float-slow` | Only the hero orbs used it |
+| `.scrub-out` (both the `@supports` rule and its reduced-motion entry) and `@keyframes fusion-scrub-out` | The scroll-exit effect had no element left to apply it to |
+
+`src/styles.css` went from 1062 to 911 lines. `RiseText.tsx` also lost a doc comment that explained itself by contrasting with `SplitText` — a reference to a file that no longer exists.
+
+**Deliberately kept**, because the names are close enough to the deleted ones to be worth stating explicitly: `@keyframes fusion-float` (still used by `animate-float` in `HeroBackground`, `HeroShowcase` and `events.index.tsx` — only the *`-slow`* wrapper went); `animate-drift` (`EventSpotlight`); `float-motes`, `float-mote` and `fusion-mote-lift` (`FloatButton` — unrelated to the deleted `mote-field` / `fusion-mote-drift` pair despite the shared word); `scrub-rise`, `scrub-line`, `scrub-fade` (`Section.tsx`, `events.index.tsx`); `lit-word` (`ScrollWords`); `rise-word` (`RiseText`); `text-gradient` (upstream's own, used by `governance.tsx` and `index.tsx`).
+
+**How the deletion was verified:** every removed name was grepped across all of `src` for full *and* partial matches (`hero-fade`, `aurora`, `mote`, `grid-scroll`, `grain`, `float-slow`, `scrub-out`, `split-word`) — the only hits left are the `float-mote*` names above and the word "remote" in a `club.ts` string. `tsc` still reports exactly the 6 pre-existing baseline errors, `npm run build` passes, and a same-origin iframe probe on `/events` measured `scrollWidth === clientWidth` with zero unclipped offenders at 320 px, 375 px and 1280 px; `/` also renders clean at 1280 px. The iframe is not a workaround for convenience here — the in-app browser surface reports `clientWidth: 0`, so any overflow number read from it directly is meaningless (it showed a bogus 220 px of overflow on a page that has none).
